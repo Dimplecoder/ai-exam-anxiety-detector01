@@ -1,14 +1,14 @@
-from transformers import pipeline
-
-classifier = pipeline("sentiment-analysis")
+import random
 
 def detect_anxiety(text):
-    result = classifier(text)[0]
-    score = result['score']
 
-    if score < 0.4:
-        return "Low"
-    elif score < 0.7:
-        return "Moderate"
-    else:
+    text = text.lower()
+
+    if "panic" in text or "scared" in text or "stress" in text:
         return "High"
+
+    elif "nervous" in text or "worried" in text:
+        return "Moderate"
+
+    else:
+        return "Low"
