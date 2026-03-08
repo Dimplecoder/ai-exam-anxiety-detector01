@@ -19,7 +19,7 @@ if st.button("🔍 Analyze Anxiety"):
     else:
         try:
             response = requests.post(
-                "ai-exam-anxiety-detector01-production.up.railway.app/predict",
+                "https://ai-exam-anxiety-detector01-production.up.railway.app/predict",
                 json={"text": text}
             )
 
@@ -62,8 +62,8 @@ if st.button("🔍 Analyze Anxiety"):
                 - Break study tasks into smaller parts
                 """)
 
-        except:
-            st.error("⚠ Backend connection failed")
+        except Exception as e:
+    st.error(f"⚠ Backend connection failed: {e}")
 
 # Footer
 st.markdown("---")
