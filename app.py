@@ -11,7 +11,7 @@ if st.button("Check Anxiety"):
     else:
         try:
             response = requests.post(
-                "http://127.0.0.1:8000/predict",
+                "https://ai-exam-anxiety-detector01-production.up.railway.app//predict",
                 json={"text": text}
             )
 
