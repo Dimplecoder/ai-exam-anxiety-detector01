@@ -16,54 +16,71 @@ if st.button("🔍 Analyze Anxiety"):
 
     if text.strip() == "":
         st.warning("Please enter some text first.")
+
     else:
-        try:
-            response = requests.post(
-                "https://ai-exam-anxiety-detector01-production.up.railway.app/predict",
-                json={"text": text}
-            )
+        with st.spinner("Analyzing your anxiety level..."):
 
-            result = response.json()
-            level = result["anxiety_level"]
+            try:
+                response = requests.post(
+                    "https://ai-exam-anxiety-detector01-production.up.railway.app/predict",
+                    json={"text": text},
+                    timeout=10
+                )
 
-            st.subheader("📊 Anxiety Level Result")
+                if response.status_code == 200:
+                    result = response.json()
+                    level = result.get("anxiety_level", "Unknown")
 
-            # Display result
-            if level == "Low":
-                st.success("😊 Low Anxiety")
-                st.progress(30)
+                    st.subheader("📊 Anxiety Level Result")
 
-                st.info("""
-                **Tips to stay confident**
-                - Keep following your study schedule
-                - Revise regularly
-                - Maintain good sleep
-                """)
+                    # Display result
+                    if level == "Low":
+                        st.success("😊 Low Anxiety")
+                        st.progress(30)
 
-            elif level == "Moderate":
-                st.warning("😐 Moderate Anxiety")
-                st.progress(60)
+                        st.info("""
+**Tips to stay confident**
+- Keep following your study schedule
+- Revise regularly
+- Maintain good sleep
+""")
 
-                st.info("""
-                **Tips to reduce stress**
-                - Take short study breaks
-                - Practice breathing exercises
-                - Organize your study plan
-                """)
+                    elif level == "Moderate":
+                        st.warning("😐 Moderate Anxiety")
+                        st.progress(60)
 
-            else:
-                st.error("😟 High Anxiety")
-                st.progress(90)
+                        st.info("""
+**Tips to reduce stress**
+- Take short study breaks
+- Practice breathing exercises
+- Organize your study plan
+""")
 
-                st.info("""
-                **Important tips**
-                - Take deep breaths
-                - Talk to friends or teachers
-                - Break study tasks into smaller parts
-                """)
+                    elif level == "High":
+                        st.error("😟 High Anxiety")
+                        st.progress(90)
 
-        except Exception as e:
-    st.error(f"⚠ Backend connection failed: {e}")
+                        st.info("""
+**Important tips**
+- Take deep breaths
+- Talk to friends or teachers
+- Break study tasks into smaller parts
+""")
+
+                    else:
+                        st.error("⚠ Unexpected response from AI model.")
+
+                else:
+                    st.error(f"⚠ Backend error: {response.status_code}")
+
+            except requests.exceptions.ConnectionError:
+                st.error("⚠ Cannot connect to backend server.")
+
+            except requests.exceptions.Timeout:
+                st.error("⚠ Server is taking too long to respond.")
+
+            except Exception as e:
+                st.error(f"⚠ Backend connection failed: {e}")
 
 # Footer
 st.markdown("---")
